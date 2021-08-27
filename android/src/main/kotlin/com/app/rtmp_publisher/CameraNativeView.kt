@@ -49,7 +49,7 @@ class CameraNativeView(
     init {
         glView.isKeepAspectRatio = true
         glView.holder.addCallback(this)
-        rtmpCamera = RtmpCamera2(glView, this,2)
+        rtmpCamera = RtmpCamera2(glView, this,4)
         rtmpCamera.setReTries(10)
         rtmpCamera.setFpsListener { fps = it }
     }
