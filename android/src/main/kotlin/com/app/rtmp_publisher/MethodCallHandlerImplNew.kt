@@ -40,11 +40,13 @@ class MethodCallHandlerImplNew(
         imageStreamChannel = EventChannel(messenger, "plugins.flutter.io/rtmp_publisher/imageStream")
         methodChannel.setMethodCallHandler(this)
         nativeViewFactory = NativeViewFactory(activity)
+        nativeViewFactory?.let { connection ->
+            flutterEngine
+                    .platformViewsController
+                    .registry
+                    .registerViewFactory("hybrid-view-type", connection)
+        }
 
-        flutterEngine
-                .platformViewsController
-                .registry
-                .registerViewFactory("hybrid-view-type", nativeViewFactory)
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)

@@ -47,7 +47,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   bool enableAudio = true;
   bool useOpenGL = true;
   TextEditingController _textFieldController =
-      TextEditingController(text: "rtmp://192.168.68.116/live/your_stream");
+      TextEditingController(text: "rtmp://127.0.0.1:1935/live/stream1");
 
   bool get isStreaming => controller?.value?.isStreamingVideoRtmp ?? false;
   bool isVisible = true;
@@ -305,7 +305,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
   void showInSnackBar(String message) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message)));
+    // _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message)));
   }
 
   void onNewCameraSelected(CameraDescription cameraDescription) async {
@@ -313,12 +313,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       await stopVideoStreaming();
       await controller.dispose();
     }
-    controller = CameraController(
-      cameraDescription,
-      ResolutionPreset.medium,
-      enableAudio: enableAudio,
-      androidUseOpenGL: useOpenGL,
-    );
+    controller = CameraController(cameraDescription, ResolutionPreset.high,
+        enableAudio: enableAudio,
+        androidUseOpenGL: useOpenGL,
+        streamingPreset: ResolutionPreset.high);
 
     // If the controller is updated then update the UI.
     controller.addListener(() async {
@@ -526,14 +524,14 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
               onChanged: (String str) => result = str,
             ),
             actions: <Widget>[
-              new FlatButton(
+              new TextButton(
                 child: new Text(
                     MaterialLocalizations.of(context).cancelButtonLabel),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text(MaterialLocalizations.of(context).okButtonLabel),
                 onPressed: () {
                   Navigator.pop(context, result);
@@ -589,8 +587,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     // Open up a dialog for the url
     List<String> myUrl = [
-      'rtmp://a.rtmp.youtube.com/live2/ap2y-k3fp-ma62-eybg-46ar',
-      'rtmps://live-api-s.facebook.com:443/rtmp/FB-1382039858862049-0-Abzp9AEJL9KGGooe'
+      'rtmp://127.0.0.1:1935/live/stream1',
+      //'rtmp://a.rtmp.youtube.com/live2/ap2y-k3fp-ma62-eybg-46ar',
+      //'rtmps://live-api-s.facebook.com:443/rtmp/FB-1382039858862049-0-Abzp9AEJL9KGGooe'
     ];
 
     try {

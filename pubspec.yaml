@@ -13,8 +13,8 @@ dependencies:
   http: ^0.13.3
 
 dev_dependencies:
-  path_provider: ^2.0.2
-  video_player: ^2.1.12
+  path_provider: null
+  video_player: ^2.4.7
   flutter_test:
     sdk: flutter
   flutter_driver:

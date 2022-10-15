@@ -78,12 +78,11 @@ CameraLensDirection _parseCameraLensDirection(String string) {
 ///
 /// May throw a [CameraException].
 Future<List<CameraDescription>> availableCameras() async {
- try {
+  try {
     final List<Map<dynamic, dynamic>>? cameras = await _channel
         .invokeListMethod<Map<dynamic, dynamic>>('availableCameras');
     if (cameras == null) {
       throw CameraException('invalid', 'Unable to communicate with the plugin');
-
     }
     return cameras.map((Map<dynamic, dynamic> camera) {
       return CameraDescription(
@@ -98,7 +97,10 @@ Future<List<CameraDescription>> availableCameras() async {
 }
 
 class CameraDescription {
-  CameraDescription({required this.name, required this.lensDirection, required this.sensorOrientation});
+  CameraDescription(
+      {required this.name,
+      required this.lensDirection,
+      required this.sensorOrientation});
 
   final String name;
   final CameraLensDirection lensDirection;
@@ -208,17 +210,17 @@ class CameraPreview extends StatelessWidget {
 /// The state of a [CameraController].
 class CameraValue {
   const CameraValue({
-   required this.isInitialized,
+    required this.isInitialized,
     this.errorDescription,
     this.previewSize,
-   required this.previewQuarterTurns,
-   required this.isRecordingVideo,
-   required this.isTakingPicture,
-   required this.isStreamingImages,
-   required this.isStreamingVideoRtmp,
+    required this.previewQuarterTurns,
+    required this.isRecordingVideo,
+    required this.isTakingPicture,
+    required this.isStreamingImages,
+    required this.isStreamingVideoRtmp,
     this.event,
-   required bool isRecordingPaused,
-   required bool isStreamingPaused,
+    required bool isRecordingPaused,
+    required bool isStreamingPaused,
   })  : _isRecordingPaused = isRecordingPaused,
         _isStreamingPaused = isStreamingPaused;
 
@@ -349,7 +351,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   late int _textureId;
   bool _isDisposed = false;
   late StreamSubscription<dynamic> _eventSubscription;
-   StreamSubscription<dynamic>? _imageStreamSubscription;
+  StreamSubscription<dynamic>? _imageStreamSubscription;
   late Completer<void> _creatingCompleter;
   final bool androidUseOpenGL;
 
@@ -371,15 +373,15 @@ class CameraController extends ValueNotifier<CameraValue> {
           'streamingPreset':
               serializeResolutionPreset(streamingPreset ?? resolutionPreset),
           'enableAudio': enableAudio,
-          'enableAndroidOpenGL': androidUseOpenGL 
+          'enableAndroidOpenGL': androidUseOpenGL
         },
       );
       if (reply == null) {
-        throw CameraException('invalid', 'Unable top communicate with the camera platform channel');
+        throw CameraException('invalid',
+            'Unable top communicate with the camera platform channel');
       }
       if (reply['textureId'] == null) {
         throw CameraException('invalid', 'textureID is null');
-
       }
       _textureId = reply['textureId']!;
       value = value.copyWith(
@@ -510,7 +512,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       value = value.copyWith(isTakingPicture: false);
     } on PlatformException catch (e) {
       value = value.copyWith(isTakingPicture: false);
-      throw CameraException(e.code,  e.message ?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -557,7 +559,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       await _channel.invokeMethod<void>('startImageStream');
       value = value.copyWith(isStreamingImages: true);
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
     const EventChannel cameraEventChannel =
         EventChannel('plugins.flutter.io/rtmp_publisher/imageStream');
@@ -591,7 +593,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       value = value.copyWith(isStreamingImages: false);
       await _channel.invokeMethod<void>('stopImageStream');
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
 
     await _imageStreamSubscription!.cancel();
@@ -618,7 +620,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     try {
       var data = await _channel
           .invokeMapMethod<String, dynamic>('getStreamStatistics');
-            if (data == null) {
+      if (data == null) {
         throw CameraException('no state', 'Unable to get stream statistics');
       }
       return StreamStatistics(
@@ -633,7 +635,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         droppedVideoFrames: data["droppedVideoFrames"],
       );
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -674,7 +676,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       );
       value = value.copyWith(isRecordingVideo: true, isRecordingPaused: false);
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -700,7 +702,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         <String, dynamic>{'textureId': _textureId},
       );
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -727,7 +729,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         <String, dynamic>{'textureId': _textureId},
       );
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -754,7 +756,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         <String, dynamic>{'textureId': _textureId},
       );
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -766,7 +768,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         'color': color,
       });
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -776,7 +778,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       await _channel.invokeMethod<void>(
           'addImageOverlay', <String, dynamic>{'image': image, 'scale': scale});
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -786,7 +788,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       await _channel.invokeMethod<void>('addDegpegOverlay',
           <String, dynamic>{'image': image, 'scale': scale});
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -796,7 +798,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       await _channel.invokeMethod<void>(
           'addCtaOverlay', <String, dynamic>{'image': image, 'scale': scale});
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -851,7 +853,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       value =
           value.copyWith(isStreamingVideoRtmp: true, isStreamingPaused: false);
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -897,7 +899,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       value =
           value.copyWith(isStreamingVideoRtmp: true, isStreamingPaused: false);
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -925,7 +927,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       );
     } on PlatformException catch (e) {
       print("Got exception " + e.toString());
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -952,7 +954,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         await _channel.invokeMethod<void>('stopImageStream');
       }
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -979,7 +981,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         <String, dynamic>{'textureId': _textureId},
       );
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
@@ -1006,7 +1008,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         <String, dynamic>{'textureId': _textureId},
       );
     } on PlatformException catch (e) {
-      throw CameraException(e.code, e.message?? 'Unknown exception');
+      throw CameraException(e.code, e.message ?? 'Unknown exception');
     }
   }
 
